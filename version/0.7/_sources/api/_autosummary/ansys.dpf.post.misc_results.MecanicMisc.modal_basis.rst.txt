@@ -1,0 +1,6 @@
+modal\_basis
+============
+
+.. currentmodule:: ansys.dpf.post.misc_results
+
+.. automethod:: MecanicMisc.modal_basis

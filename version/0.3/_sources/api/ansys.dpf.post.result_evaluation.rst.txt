@@ -1,0 +1,2 @@
+.. automodule:: ansys.dpf.post.result_evaluation
+   :inherited-members:

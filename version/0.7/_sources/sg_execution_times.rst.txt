@@ -1,0 +1,133 @@
+
+:orphan:
+
+.. _sphx_glr_sg_execution_times:
+
+
+Computation times
+=================
+**01:47.451** total execution time for 33 files **from all galleries**:
+
+.. container::
+
+  .. raw:: html
+
+    <style scoped>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    </style>
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script type="text/javascript" class="init">
+    $(document).ready( function () {
+        $('table.sg-datatable').DataTable({order: [[1, 'desc']]});
+    } );
+    </script>
+
+  .. list-table::
+   :header-rows: 1
+   :class: table table-striped sg-datatable
+
+   * - Example
+     - Time
+     - Mem (MB)
+   * - :ref:`sphx_glr_examples_01-Detailed-Examples_05-mesh-exploration.py` (``../../examples/01-Detailed-Examples/05-mesh-exploration.py``)
+     - 00:16.348
+     - 0.0
+   * - :ref:`sphx_glr_examples_00-Different-analysis-types_01-static-simulation.py` (``../../examples/00-Different-analysis-types/01-static-simulation.py``)
+     - 00:11.251
+     - 0.0
+   * - :ref:`sphx_glr_examples_02-Performance-Improvements_01-mesh-external-layer.py` (``../../examples/02-Performance-Improvements/01-mesh-external-layer.py``)
+     - 00:07.720
+     - 0.0
+   * - :ref:`sphx_glr_examples_03-Cyclic-Examples_05-modal_cyclic_no_expansion.py` (``../../examples/03-Cyclic-Examples/05-modal_cyclic_no_expansion.py``)
+     - 00:06.093
+     - 0.0
+   * - :ref:`sphx_glr_examples_00-Different-analysis-types_02-modal-simulation.py` (``../../examples/00-Different-analysis-types/02-modal-simulation.py``)
+     - 00:05.853
+     - 0.0
+   * - :ref:`sphx_glr_examples_00-Different-analysis-types_04-harmonic-complex-results.py` (``../../examples/00-Different-analysis-types/04-harmonic-complex-results.py``)
+     - 00:05.512
+     - 0.0
+   * - :ref:`sphx_glr_examples_02-Performance-Improvements_03-mesh-external-layer-compare.py` (``../../examples/02-Performance-Improvements/03-mesh-external-layer-compare.py``)
+     - 00:05.310
+     - 0.0
+   * - :ref:`sphx_glr_examples_03-Cyclic-Examples_03-cyclic-mesh-external-layer.py` (``../../examples/03-Cyclic-Examples/03-cyclic-mesh-external-layer.py``)
+     - 00:05.157
+     - 0.0
+   * - :ref:`sphx_glr_examples_01-Detailed-Examples_04-invariants.py` (``../../examples/01-Detailed-Examples/04-invariants.py``)
+     - 00:03.946
+     - 0.0
+   * - :ref:`sphx_glr_examples_00-Different-analysis-types_03-transient-simulation.py` (``../../examples/00-Different-analysis-types/03-transient-simulation.py``)
+     - 00:03.852
+     - 0.0
+   * - :ref:`sphx_glr_examples_02-Performance-Improvements_02-mesh-skin.py` (``../../examples/02-Performance-Improvements/02-mesh-skin.py``)
+     - 00:03.616
+     - 0.0
+   * - :ref:`sphx_glr_examples_05-Legacy_01-get_data_from_static_simulation.py` (``../../examples/05-Legacy/01-get_data_from_static_simulation.py``)
+     - 00:03.342
+     - 0.0
+   * - :ref:`sphx_glr_examples_03-Cyclic-Examples_02-multi-stage-cyclic-results.py` (``../../examples/03-Cyclic-Examples/02-multi-stage-cyclic-results.py``)
+     - 00:03.325
+     - 0.0
+   * - :ref:`sphx_glr_examples_00-Different-analysis-types_05-fluid-simulation.py` (``../../examples/00-Different-analysis-types/05-fluid-simulation.py``)
+     - 00:03.310
+     - 0.0
+   * - :ref:`sphx_glr_examples_03-Cyclic-Examples_04-cyclic-mesh-skin.py` (``../../examples/03-Cyclic-Examples/04-cyclic-mesh-skin.py``)
+     - 00:03.120
+     - 0.0
+   * - :ref:`sphx_glr_examples_04-Fluid-Examples_00-explore-fluid-simulation.py` (``../../examples/04-Fluid-Examples/00-explore-fluid-simulation.py``)
+     - 00:02.932
+     - 0.0
+   * - :ref:`sphx_glr_examples_01-Detailed-Examples_01-named-selections-modal-simulation.py` (``../../examples/01-Detailed-Examples/01-named-selections-modal-simulation.py``)
+     - 00:02.768
+     - 0.0
+   * - :ref:`sphx_glr_examples_01-Detailed-Examples_00-dataframe-manipulation.py` (``../../examples/01-Detailed-Examples/00-dataframe-manipulation.py``)
+     - 00:02.367
+     - 0.0
+   * - :ref:`sphx_glr_examples_03-Cyclic-Examples_01-cyclic-results.py` (``../../examples/03-Cyclic-Examples/01-cyclic-results.py``)
+     - 00:01.974
+     - 0.0
+   * - :ref:`sphx_glr_examples_05-Legacy_00-overview_example.py` (``../../examples/05-Legacy/00-overview_example.py``)
+     - 00:01.294
+     - 0.0
+   * - :ref:`sphx_glr_examples_01-Detailed-Examples_02-modal-extract-sub-results.py` (``../../examples/01-Detailed-Examples/02-modal-extract-sub-results.py``)
+     - 00:01.276
+     - 0.0
+   * - :ref:`sphx_glr_examples_05-Legacy_02-static-analysis.py` (``../../examples/05-Legacy/02-static-analysis.py``)
+     - 00:01.169
+     - 0.0
+   * - :ref:`sphx_glr_examples_05-Legacy_04-harmonic-analysis.py` (``../../examples/05-Legacy/04-harmonic-analysis.py``)
+     - 00:01.154
+     - 0.0
+   * - :ref:`sphx_glr_examples_05-Legacy_03-modal-analysis.py` (``../../examples/05-Legacy/03-modal-analysis.py``)
+     - 00:01.031
+     - 0.0
+   * - :ref:`sphx_glr_examples_05-Legacy_08-result_on_path_of_coordinates.py` (``../../examples/05-Legacy/08-result_on_path_of_coordinates.py``)
+     - 00:00.936
+     - 0.0
+   * - :ref:`sphx_glr_examples_01-Detailed-Examples_03-explore-result-data-harmonic.py` (``../../examples/01-Detailed-Examples/03-explore-result-data-harmonic.py``)
+     - 00:00.922
+     - 0.0
+   * - :ref:`sphx_glr_examples_05-Legacy_05-transient-analysis.py` (``../../examples/05-Legacy/05-transient-analysis.py``)
+     - 00:00.572
+     - 0.0
+   * - :ref:`sphx_glr_examples_05-Legacy_01-introduction.py` (``../../examples/05-Legacy/01-introduction.py``)
+     - 00:00.400
+     - 0.0
+   * - :ref:`sphx_glr_examples_01-Detailed-Examples_05-export_data.py` (``../../examples/01-Detailed-Examples/05-export_data.py``)
+     - 00:00.393
+     - 0.0
+   * - :ref:`sphx_glr_examples_01-Detailed-Examples_06-compute-min-max.py` (``../../examples/01-Detailed-Examples/06-compute-min-max.py``)
+     - 00:00.248
+     - 0.0
+   * - :ref:`sphx_glr_examples_05-Legacy_09-basics.py` (``../../examples/05-Legacy/09-basics.py``)
+     - 00:00.145
+     - 0.0
+   * - :ref:`sphx_glr_examples_05-Legacy_07-result_keywords.py` (``../../examples/05-Legacy/07-result_keywords.py``)
+     - 00:00.081
+     - 0.0
+   * - :ref:`sphx_glr_examples_05-Legacy_06-complex_results.py` (``../../examples/05-Legacy/06-complex_results.py``)
+     - 00:00.034
+     - 0.0

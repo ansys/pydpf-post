@@ -1,0 +1,6 @@
+has\_complex\_frequencies
+=========================
+
+.. currentmodule:: ansys.dpf.post.strain
+
+.. automethod:: PlasticStrain.has_complex_frequencies

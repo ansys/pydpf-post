@@ -1,0 +1,6 @@
+z
+=
+
+.. currentmodule:: ansys.dpf.post.displacement
+
+.. autoproperty:: Displacement.z

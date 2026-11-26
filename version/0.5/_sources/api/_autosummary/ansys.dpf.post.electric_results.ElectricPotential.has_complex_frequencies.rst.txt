@@ -1,0 +1,6 @@
+has\_complex\_frequencies
+=========================
+
+.. currentmodule:: ansys.dpf.post.electric_results
+
+.. automethod:: ElectricPotential.has_complex_frequencies

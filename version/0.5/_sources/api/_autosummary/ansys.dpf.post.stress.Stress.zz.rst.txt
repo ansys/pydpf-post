@@ -1,0 +1,6 @@
+zz
+==
+
+.. currentmodule:: ansys.dpf.post.stress
+
+.. autoproperty:: Stress.zz

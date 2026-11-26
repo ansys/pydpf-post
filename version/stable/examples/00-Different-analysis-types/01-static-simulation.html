@@ -1,0 +1,930 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Postprocess a static mechanical simulation &#8212; PyDPF-Post</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=fbf3eb5d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=949a1ff5" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=fbf3eb5d" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../_static/documentation_options.js?v=1a9b1e2b"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=040b0d01"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/00-Different-analysis-types/01-static-simulation';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://post.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.11';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Postprocess a modal mechanical simulation" href="02-modal-simulation.html" />
+    <link rel="prev" title="PyDPF-Post analysis types" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.11.0" />
+  <link rel="canonical" href="https://post.docs.pyansys.com/version/stable/examples/00-Different-analysis-types/01-static-simulation.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">Starting with PyDPF-Core 0.15 and PyDPF-Post 0.11, gRPC communication with the DPF server defaults to requiring mTLS authentication.
+Refer to <a href='https://dpf.docs.pyansys.com/version/stable/getting_started/dpf_server.html#run-dpf-server-in-secure-mode-with-mtls'>this page</a> for more information.</div>
+</aside>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyDPF-Post - Home"/>
+    <img src="../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyDPF-Post - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div>
+        </div>
+      
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pydpf-post" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pydpf-post" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">PyDPF-Post analysis types</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Postprocess a static mechanical simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02-modal-simulation.html">Postprocess a modal mechanical simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03-transient-simulation.html">Postprocess a transient mechanical simulation with animation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04-harmonic-complex-results.html">Postprocess a harmonic mechanical simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05-fluid-simulation.html">Postprocess a fluid simulation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../01-Detailed-Examples/index.html">PyDPF-Post features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02-Performance-Improvements/index.html">PyDPF-Post performance improvements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03-Cyclic-Examples/index.html">PyDPF-Post cyclic symmetry examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04-Fluid-Examples/index.html">PyDPF-Post fluid examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../05-Legacy/index.html">PyDPF-Post legacy examples</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Examples</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">PyDPF-Post analysis types</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Postprocess a static mechanical simulation</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-examples-00-different-analysis-types-01-static-simulation-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="postprocess-a-static-mechanical-simulation">
+<span id="ref-static-example"></span><span id="sphx-glr-examples-00-different-analysis-types-01-static-simulation-py"></span><h1>Postprocess a static mechanical simulation<a class="headerlink" href="#postprocess-a-static-mechanical-simulation" title="Link to this heading">#</a></h1>
+<p>This example shows how to postprocess a static mechanical simulation to extract results like
+displacement and stress. It shows how to selecting subparts of the results by scoping
+on specific nodes or elements.</p>
+<section id="perform-required-imports">
+<h2>Perform required imports<a class="headerlink" href="#perform-required-imports" title="Link to this heading">#</a></h2>
+<p>Perform required imports. This example uses a supplied file that you can
+get by importing the DPF <code class="docutils literal notranslate"><span class="pre">examples</span></code> package.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf</span><span class="w"> </span><span class="kn">import</span> <span class="n">post</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf.post</span><span class="w"> </span><span class="kn">import</span> <span class="n">examples</span>
+</pre></div>
+</div>
+</section>
+<section id="get-simulation-object">
+<h2>Get <code class="docutils literal notranslate"><span class="pre">Simulation</span></code> object<a class="headerlink" href="#get-simulation-object" title="Link to this heading">#</a></h2>
+<p>Get the <code class="docutils literal notranslate"><span class="pre">Simulation</span></code> object that allows access to the result. The <code class="docutils literal notranslate"><span class="pre">Simulation</span></code>
+object must be instantiated with the path for the result file. For example,
+<code class="docutils literal notranslate"><span class="pre">&quot;C:/Users/user/my_result.rst&quot;</span></code> on Windows or <code class="docutils literal notranslate"><span class="pre">&quot;/home/user/my_result.rst&quot;</span></code>
+on Linux.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/dev/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">example_path</span></a> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">find_static_rst</span><span class="p">()</span>
+<span class="c1"># to automatically detect the simulation type, use:</span>
+<span class="n">simulation</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_simulation</span><span class="p">(</span><a href="https://docs.python.org/dev/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">example_path</span></a><span class="p">)</span>
+
+<span class="c1"># to enable auto-completion, use the equivalent:</span>
+<span class="n">simulation</span> <span class="o">=</span> <a href="https://docs.python.org/dev/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">post</span><span class="o">.</span><span class="n">StaticMechanicalSimulation</span></a><span class="p">(</span><a href="https://docs.python.org/dev/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">example_path</span></a><span class="p">)</span>
+
+<span class="c1"># print the simulation to get an overview of what&#39;s available</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">simulation</span><span class="p">)</span>
+
+<span class="n">displacement</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">displacement</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">displacement</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Static Mechanical Simulation.
+
+
+Data Sources
+------------------------------
+/opt/hostedtoolcache/Python/3.10.19/x64/lib/python3.10/site-packages/ansys/dpf/core/examples/result_files/static.rst
+
+DPF Model
+------------------------------
+Static analysis
+Unit system: MKS: m, kg, N, s, V, A, degC
+Physics Type: Mechanical
+Available results:
+     -  node_orientations: Nodal Node Euler Angles
+     -  displacement: Nodal Displacement
+     -  reaction_force: Nodal Force
+     -  stress: ElementalNodal Stress
+     -  elemental_volume: Elemental Volume
+     -  stiffness_matrix_energy: Elemental Energy-stiffness matrix
+     -  artificial_hourglass_energy: Elemental Hourglass Energy
+     -  kinetic_energy: Elemental Kinetic Energy
+     -  co_energy: Elemental co-energy
+     -  incremental_energy: Elemental incremental energy
+     -  thermal_dissipation_energy: Elemental thermal dissipation energy
+     -  elastic_strain: ElementalNodal Strain
+     -  elastic_strain_eqv: ElementalNodal Strain eqv
+     -  element_orientations: ElementalNodal Element Euler Angles
+     -  structural_temperature: ElementalNodal Structural temperature
+------------------------------
+DPF  Meshed Region:
+  81 nodes
+  8 elements
+  Unit: m
+  With solid (3D) elements
+------------------------------
+DPF  Time/Freq Support:
+  Number of sets: 1
+Cumulative     Time (s)       LoadStep       Substep
+1              1.000000       1              1
+
+
+             results       U (m)
+             set_ids           1
+ node_ids components
+        1          X -3.3190e-22
+                   Y -6.9357e-09
+                   Z -3.2862e-22
+       26          X  2.2303e-09
+                   Y -7.1421e-09
+                   Z -2.9208e-22
+      ...        ...         ...
+</pre></div>
+</div>
+</section>
+<section id="select-subparts-of-displacement">
+<h2>Select subparts of displacement<a class="headerlink" href="#select-subparts-of-displacement" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># To get X displacements</span>
+<span class="n">x_displacement</span> <span class="o">=</span> <span class="n">displacement</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">components</span><span class="o">=</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x_displacement</span><span class="p">)</span>
+
+
+<span class="c1"># equivalent to</span>
+<span class="n">x_displacement</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">displacement</span><span class="p">(</span><span class="n">components</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x_displacement</span><span class="p">)</span>
+
+<span class="c1"># plot</span>
+<span class="n">x_displacement</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+
+<span class="c1"># extract displacement on specific nodes</span>
+<span class="n">nodes_displacement</span> <span class="o">=</span> <span class="n">displacement</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">node_ids</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">])</span>
+<span class="n">nodes_displacement</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+
+<span class="c1"># equivalent to:</span>
+<span class="n">nodes_displacement</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">displacement</span><span class="p">(</span><span class="n">node_ids</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">nodes_displacement</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="sphx-glr-horizontal">
+<li><img src="../../_images/sphx_glr_01-static-simulation_001.png" srcset="../../_images/sphx_glr_01-static-simulation_001.png" alt="01 static simulation" class = "sphx-glr-multi-img"/></li>
+<li><img src="../../_images/sphx_glr_01-static-simulation_002.png" srcset="../../_images/sphx_glr_01-static-simulation_002.png" alt="01 static simulation" class = "sphx-glr-multi-img"/></li>
+</ul>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>            results       U (m)
+            set_ids           1
+node_ids components
+       1          X -3.3190e-22
+      26             2.2303e-09
+      14             0.0000e+00
+      12             0.0000e+00
+       2            -3.0117e-22
+      27             2.0908e-09
+     ...        ...         ...
+
+
+ results     U_X (m)
+ set_ids           1
+node_ids
+       1 -3.3190e-22
+      26  2.2303e-09
+      14  0.0000e+00
+      12  0.0000e+00
+       2 -3.0117e-22
+      27  2.0908e-09
+     ...         ...
+
+
+            results       U (m)
+            set_ids           1
+node_ids components
+       1          X -3.3190e-22
+                  Y -6.9357e-09
+                  Z -3.2862e-22
+      10          X  0.0000e+00
+                  Y  0.0000e+00
+                  Z  0.0000e+00
+</pre></div>
+</div>
+</section>
+<section id="compute-total-displacement-norm">
+<h2>Compute total displacement (norm)<a class="headerlink" href="#compute-total-displacement-norm" title="Link to this heading">#</a></h2>
+<p>Compute the norm of the displacement on a selection of nodes.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">nodes_displacement</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">displacement</span><span class="p">(</span>
+    <span class="n">node_ids</span><span class="o">=</span><span class="n">simulation</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">node_ids</span><span class="p">[</span><span class="mi">10</span><span class="p">:],</span> <span class="n">norm</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">nodes_displacement</span><span class="p">)</span>
+<span class="n">nodes_displacement</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../../_images/sphx_glr_01-static-simulation_003.png" srcset="../../_images/sphx_glr_01-static-simulation_003.png" alt="01 static simulation" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>  results    U_N (m)
+  set_ids          1
+ node_ids
+       11 0.0000e+00
+       12 0.0000e+00
+       13 0.0000e+00
+       14 0.0000e+00
+       15 0.0000e+00
+       16 0.0000e+00
+      ...        ...
+
+
+(None, &lt;pyvista.plotting.plotter.Plotter object at 0x7f76df4036d0&gt;)
+</pre></div>
+</div>
+</section>
+<section id="extract-tensor-stresses">
+<h2>Extract tensor stresses<a class="headerlink" href="#extract-tensor-stresses" title="Link to this heading">#</a></h2>
+<p>Extract raw elemental nodal stresses from the result file. Then, apply averaging
+and compute equivalent stresses.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">elem_nodal_stress</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">stress</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">elem_nodal_stress</span><span class="p">)</span>
+
+<span class="c1"># Compute nodal stresses from the result file</span>
+<span class="n">nodal_stress</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">stress_nodal</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">nodal_stress</span><span class="p">)</span>
+
+<span class="c1"># Compute elemental stresses from the result file</span>
+<span class="n">elemental_stress</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">stress_elemental</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">elemental_stress</span><span class="p">)</span>
+
+<span class="c1"># Extract elemental stresses on specific elements</span>
+<span class="n">elemental_stress</span> <span class="o">=</span> <span class="n">elemental_stress</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">element_ids</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">])</span>
+<span class="n">elemental_stress</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+
+<span class="c1"># Compute nodal eqv stresses from the result file</span>
+<span class="n">eqv_stress</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">stress_eqv_von_mises_nodal</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">eqv_stress</span><span class="p">)</span>
+<span class="n">eqv_stress</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<ul class="sphx-glr-horizontal">
+<li><img src="../../_images/sphx_glr_01-static-simulation_004.png" srcset="../../_images/sphx_glr_01-static-simulation_004.png" alt="01 static simulation" class = "sphx-glr-multi-img"/></li>
+<li><img src="../../_images/sphx_glr_01-static-simulation_005.png" srcset="../../_images/sphx_glr_01-static-simulation_005.png" alt="01 static simulation" class = "sphx-glr-multi-img"/></li>
+</ul>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>                results      S (Pa)                                                             ...
+                set_ids           1                                                             ...
+                   node           0           1           2           3           4           5 ...
+ element_ids components                                                                         ...
+           5         XX -3.7836e+03  1.1793e+04 -3.2947e+04 -2.2019e+04  7.3721e+03  1.8301e+04 ...
+                     YY -1.2110e+05 -9.9179e+04 -1.0033e+05 -7.4344e+04 -9.9179e+04 -8.0542e+04 ...
+                     ZZ -3.7836e+03  7.3721e+03 -3.2461e+04 -2.2019e+04  1.1793e+04  1.8301e+04 ...
+                     XY  5.3318e+02 -9.7301e+03  2.6037e+04 -1.2541e+03  5.5354e+02 -1.1500e+04 ...
+                     YZ -5.3318e+02 -5.5354e+02  1.1343e+03  1.2541e+03  9.7301e+03  1.1500e+04 ...
+                     XZ -1.4540e+02  5.9879e+02 -2.4309e+02 -2.1037e-10  5.9879e+02  2.5527e+02 ...
+         ...        ...         ...         ...         ...         ...         ...         ... ...
+
+
+             results      S (Pa)
+             set_ids           1
+ node_ids components
+        1         XX -4.8113e+03
+                  YY -1.1280e+05
+                  ZZ -4.8113e+03
+                  XY  0.0000e+00
+                  YZ  0.0000e+00
+                  XZ  0.0000e+00
+      ...        ...         ...
+
+
+                results      S (Pa)
+                set_ids           1
+ element_ids components
+           5         XX -1.2071e+04
+                     YY -1.0000e+05
+                     ZZ -1.2071e+04
+                     XY  3.8006e+03
+                     YZ -3.8006e+03
+                     XZ  4.1885e+01
+         ...        ...         ...
+
+
+  results  S_VM (Pa)
+  set_ids          1
+ node_ids
+        1 1.0799e+05
+       26 1.0460e+05
+       14 8.1283e+04
+       12 5.2324e+04
+        2 1.0460e+05
+       27 1.0006e+05
+      ...        ...
+
+
+(None, &lt;pyvista.plotting.plotter.Plotter object at 0x7f770197d990&gt;)
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 11.244 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-00-different-analysis-types-01-static-simulation-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/22b60b529bb2e867b270a62f4a662118/01-static-simulation.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">01-static-simulation.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/7f9feadb61efca2cc8715fbd5a624280/01-static-simulation.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">01-static-simulation.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/f37018ff8fe70f75bead7e3a1ef7f5e0/01-static-simulation.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">01-static-simulation.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#perform-required-imports">Perform required imports</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-simulation-object">Get <code class="docutils literal notranslate"><span class="pre">Simulation</span></code> object</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#select-subparts-of-displacement">Select subparts of displacement</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compute-total-displacement-norm">Compute total displacement (norm)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extract-tensor-stresses">Extract tensor stresses</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+<!-- If there is no fix edit button function, use the PyData edit-this-button-->
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/examples/00-Different-analysis-types/01-static-simulation.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"ignoreLocation": true, "keys": ["title", "text"], "limit": 10, "min_chars_for_search": 2, "threshold": 0.5}');
+const SEARCH_FILE = "../../_static/search.json";
+</script>
+
+
+<script src="../../_static/js/search.js"></script>
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2025 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  1.4.1. <br />Last updated on
+  <span id="ast_build_date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var ast_lastModifiedDate = new Date(document.lastModified);
+  var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("ast_build_date").innerHTML = ast_build_date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

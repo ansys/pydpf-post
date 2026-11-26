@@ -1,0 +1,1028 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Access results &#8212; PyDPF-Post</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/ansys-sphinx-theme.css?v=fbf3eb5d" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=949a1ff5" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/ansys-sphinx-theme.css?v=fbf3eb5d" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../_static/documentation_options.js?v=1a9b1e2b"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=040b0d01"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/accessing_results';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://post.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.11';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Plot results" href="plotting.html" />
+    <link rel="prev" title="Browse result file metadata" href="accessing_file_metadata.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.11.0" />
+  <link rel="canonical" href="https://post.docs.pyansys.com/version/stable/user_guide/accessing_results.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">Starting with PyDPF-Core 0.15 and PyDPF-Post 0.11, gRPC communication with the DPF server defaults to requiring mTLS authentication.
+Refer to <a href='https://dpf.docs.pyansys.com/version/stable/getting_started/dpf_server.html#run-dpf-server-in-secure-mode-with-mtls'>this page</a> for more information.</div>
+</aside>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyDPF-Post - Home"/>
+    <img src="../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyDPF-Post - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contributing.html">
+    Contribute
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div>
+        </div>
+      
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pydpf-post" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contributing.html">
+    Contribute
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pydpf-post" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="post_processing.html">Load a result file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="accessing_file_metadata.html">Browse result file metadata</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Access results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html">Plot results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="server_context.html">Change the server context</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extending_to_core.html">Use PyDPF-Core operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshoot common issues</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">User guide</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Access results</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="access-results">
+<span id="user-guide-accessing-results"></span><h1>Access results<a class="headerlink" href="#access-results" title="Link to this heading">#</a></h1>
+<p>After a result file is loaded, you can access the results themselves. You can query results using dedicated methods.</p>
+<p>This code shows how to instantiate the <a class="reference internal" href="../api/ansys.dpf.post.simulation.html#ansys.dpf.post.simulation.Simulation" title="ansys.dpf.post.simulation.Simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Simulation</span></code></a> object and then
+get the <code class="docutils literal notranslate"><span class="pre">displacement</span></code> result for a loaded simulation:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Instantiate</span> <span class="n">the</span> <span class="n">simulation</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf</span><span class="w"> </span><span class="kn">import</span> <span class="n">post</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf.post</span><span class="w"> </span><span class="kn">import</span> <span class="n">examples</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">simulation</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_simulation</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">multishells_rst</span><span class="p">)</span>
+
+<span class="n">Extract</span> <span class="n">the</span> <span class="n">displacement</span> <span class="n">data</span> <span class="k">as</span> <span class="n">a</span> <span class="n">DataFrame</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">displacement</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">displacement</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="c1"># stress, elastic_strain (...) can also be called.</span>
+
+<span class="n">See</span> <span class="n">the</span> <span class="n">following</span> <span class="nb">list</span> <span class="k">for</span> <span class="n">the</span> <span class="n">results</span> <span class="n">that</span> <span class="n">can</span> <span class="n">be</span>
+<span class="n">extracted</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>You can use <em>keyword arguments</em> to specify additional options,
+including the components, scope, and time. For detailed examples,
+see <a class="reference internal" href="../examples/05-Legacy/07-result_keywords.html#ref-result-keywords"><span class="std std-ref">Use keywords to get a more precise result</span></a>.</p>
+<p>PyDPF-Post supports two types of result files:</p>
+<ul class="simple">
+<li><p>Structural (RST)</p></li>
+<li><p>Thermal/electric (RTH) (with the legacy <code class="docutils literal notranslate"><span class="pre">load_solution()</span></code> method only)</p></li>
+</ul>
+<p>It also supports some LS-DYNA result files and some Fluent and CFX result files as indicated in
+<span class="xref std std-ref">solver_result_files_support</span>.</p>
+<p>You should only request results available in the result file.
+To determine which results are available, see <a class="reference internal" href="accessing_file_metadata.html#user-guide-accessing-file-metadata"><span class="std std-ref">Browse result file metadata</span></a>.</p>
+<section id="structural-result-files">
+<h2>Structural result files<a class="headerlink" href="#structural-result-files" title="Link to this heading">#</a></h2>
+<p>You can use the legacy <code class="docutils literal notranslate"><span class="pre">Solution</span></code> object to access structural results.</p>
+<p>After loading a <code class="docutils literal notranslate"><span class="pre">Solution</span></code> object from a structural analysis result (RST)
+file, you can query these <code class="docutils literal notranslate"><span class="pre">Result</span></code> objects:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">displacement</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stress</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">elastic_strain</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">plastic_strain</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">structural_temperature</span></code></p></li>
+</ul>
+<section id="displacement">
+<h3>Displacement<a class="headerlink" href="#displacement" title="Link to this heading">#</a></h3>
+<p>Displacement is the DOF solution for a structural analysis. The location argument
+for a DOF solution must be modal.</p>
+<p>This code shows how to access the <a class="reference internal" href="../api/ansys.dpf.post.displacement.html#ansys.dpf.post.displacement.Displacement" title="ansys.dpf.post.displacement.Displacement"><code class="xref py py-class docutils literal notranslate"><span class="pre">Displacement</span></code></a>
+result object:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Instantiate the solution object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf</span><span class="w"> </span><span class="kn">import</span> <span class="n">post</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf.post</span><span class="w"> </span><span class="kn">import</span> <span class="n">examples</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">solution</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_solution</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">multishells_rst</span><span class="p">)</span>
+
+<span class="n">Instantiate</span> <span class="n">the</span> <span class="n">displacement</span> <span class="n">result</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">displacement</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">displacement</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The displacement <code class="docutils literal notranslate"><span class="pre">Result</span></code> object corresponds to a vector field. To obtain the scalar
+components (y-components) of this field, access the subresult with this code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Instantiate</span> <span class="n">the</span> <span class="n">solution</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf</span><span class="w"> </span><span class="kn">import</span> <span class="n">post</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf.post</span><span class="w"> </span><span class="kn">import</span> <span class="n">examples</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">solution</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_solution</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">multishells_rst</span><span class="p">)</span>
+
+<span class="n">Instantiate</span> <span class="n">the</span> <span class="n">displacement</span> <span class="n">result</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">displacement</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">displacement</span><span class="p">()</span>
+
+<span class="n">Get</span> <span class="n">the</span> <span class="n">y</span> <span class="n">displacement</span> <span class="n">result</span> <span class="n">data</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">u_y</span> <span class="o">=</span> <span class="n">displacement</span><span class="o">.</span><span class="n">y</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">u_y</span><span class="o">.</span><span class="n">get_data_at_field</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>For more information, see <a class="reference internal" href="../api/result_data.html#ref-api-result-data"><span class="std std-ref">ResultData class</span></a>.</p>
+</section>
+<section id="stress">
+<h3>Stress<a class="headerlink" href="#stress" title="Link to this heading">#</a></h3>
+<p>This code shows to access the <a class="reference internal" href="../api/ansys.dpf.post.stress.html#ansys.dpf.post.stress.Stress" title="ansys.dpf.post.stress.Stress"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stress</span></code></a> result
+object:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Instantiate</span> <span class="n">the</span> <span class="n">solution</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf</span><span class="w"> </span><span class="kn">import</span> <span class="n">post</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf.post</span><span class="w"> </span><span class="kn">import</span> <span class="n">examples</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">solution</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_solution</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">multishells_rst</span><span class="p">)</span>
+
+<span class="c1"># Instantiate the stress result object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">stress</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">stress</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>A <code class="docutils literal notranslate"><span class="pre">Stress</span></code> result object corresponds to a tensor field. To obtain the scalar
+components of this field, such as the normal y-stresses, access the subresult:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Instantiate</span> <span class="n">the</span> <span class="n">solution</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf</span><span class="w"> </span><span class="kn">import</span> <span class="n">post</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf.post</span><span class="w"> </span><span class="kn">import</span> <span class="n">examples</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">solution</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_solution</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">multishells_rst</span><span class="p">)</span>
+
+<span class="n">Instantiate</span> <span class="n">the</span> <span class="n">stress</span> <span class="n">result</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">stress</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">stress</span><span class="p">()</span>
+
+<span class="n">Get</span> <span class="n">the</span> <span class="n">yy</span> <span class="n">stress</span> <span class="n">result</span> <span class="n">data</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">s_yy</span> <span class="o">=</span> <span class="n">stress</span><span class="o">.</span><span class="n">yy</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">s_yy</span><span class="o">.</span><span class="n">get_data_at_field</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>You can query other components, as well as whole tensor data, accordingly.
+For more information, see <a class="reference internal" href="../api/result_data.html#ref-api-result-data"><span class="std std-ref">ResultData class</span></a>.</p>
+</section>
+<section id="elastic-and-plastic-strain">
+<h3>Elastic and plastic strain<a class="headerlink" href="#elastic-and-plastic-strain" title="Link to this heading">#</a></h3>
+<p>This code shows how to access the <a class="reference internal" href="../api/ansys.dpf.post.strain.html#ansys.dpf.post.strain.ElasticStrain" title="ansys.dpf.post.strain.ElasticStrain"><code class="xref py py-class docutils literal notranslate"><span class="pre">ElasticStrain</span></code></a> and
+<a class="reference internal" href="../api/ansys.dpf.post.strain.html#ansys.dpf.post.strain.PlasticStrain" title="ansys.dpf.post.strain.PlasticStrain"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlasticStrain</span></code></a> result objects:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Instantiate</span> <span class="n">the</span> <span class="n">solution</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf</span><span class="w"> </span><span class="kn">import</span> <span class="n">post</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf.post</span><span class="w"> </span><span class="kn">import</span> <span class="n">examples</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">solution</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_solution</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">multishells_rst</span><span class="p">)</span>
+
+<span class="n">Instantiate</span> <span class="n">the</span> <span class="n">strain</span> <span class="n">result</span> <span class="n">objects</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">elastic_strain</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">elastic_strain</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">plastic_strain</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">plastic_strain</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>A <code class="docutils literal notranslate"><span class="pre">Strain</span></code> result object corresponds to a tensor field. To obtain the scalar
+components of this field, such as the shear xy-strains, access the subresult:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Instantiate</span> <span class="n">the</span> <span class="n">solution</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf</span><span class="w"> </span><span class="kn">import</span> <span class="n">post</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf.post</span><span class="w"> </span><span class="kn">import</span> <span class="n">examples</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">solution</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_solution</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">multishells_rst</span><span class="p">)</span>
+
+<span class="n">Instantiate</span> <span class="n">the</span> <span class="n">elastic</span> <span class="n">strain</span> <span class="n">result</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">elastic_strain</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">elastic_strain</span><span class="p">()</span>
+
+<span class="n">Get</span> <span class="n">the</span> <span class="n">xy</span> <span class="n">elastic</span> <span class="n">strain</span> <span class="n">result</span> <span class="n">data</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">e_yy</span> <span class="o">=</span> <span class="n">elastic_strain</span><span class="o">.</span><span class="n">xy</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">e_yy</span><span class="o">.</span><span class="n">get_data_at_field</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>You can query other components, as well as whole tensor data, accordingly.
+For more information, see <a class="reference internal" href="../api/result_data.html#ref-api-result-data"><span class="std std-ref">ResultData class</span></a>.</p>
+</section>
+<section id="structural-temperature">
+<h3>Structural temperature<a class="headerlink" href="#structural-temperature" title="Link to this heading">#</a></h3>
+<p>This code shows to access the <a class="reference internal" href="../api/ansys.dpf.post.temperature.html#ansys.dpf.post.temperature.StructuralTemperature" title="ansys.dpf.post.temperature.StructuralTemperature"><code class="xref py py-class docutils literal notranslate"><span class="pre">StructuralTemperature</span></code></a>
+result object:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Instantiate</span> <span class="n">the</span> <span class="n">solution</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf</span><span class="w"> </span><span class="kn">import</span> <span class="n">post</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf.post</span><span class="w"> </span><span class="kn">import</span> <span class="n">examples</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">solution</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_solution</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">multishells_rst</span><span class="p">)</span>
+
+<span class="n">Instantiate</span> <span class="n">the</span> <span class="n">structural</span> <span class="n">temperature</span> <span class="n">result</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">structural_temperature</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">structural_temperature</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>To access the temperature scalar field, use this code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Instantiate</span> <span class="n">the</span> <span class="n">solution</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf</span><span class="w"> </span><span class="kn">import</span> <span class="n">post</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf.post</span><span class="w"> </span><span class="kn">import</span> <span class="n">examples</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">solution</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_solution</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">multishells_rst</span><span class="p">)</span>
+
+<span class="n">Instantiate</span> <span class="n">the</span> <span class="n">structural</span> <span class="n">temperature</span> <span class="n">result</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">structural_temperature</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">structural_temperature</span><span class="p">()</span>
+
+<span class="n">Get</span> <span class="n">the</span> <span class="n">structural</span> <span class="n">temperature</span> <span class="n">result</span> <span class="n">data</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">temperature</span> <span class="o">=</span> <span class="n">structural_temperature</span><span class="o">.</span><span class="n">scalar</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">temperature</span><span class="o">.</span><span class="n">get_data_at_field</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="miscellaneous-results">
+<h3>Miscellaneous results<a class="headerlink" href="#miscellaneous-results" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">Solution</span></code> object might contain other miscellaneous <a class="reference internal" href="../api/ansys.dpf.post.misc_results.html#ansys.dpf.post.misc_results.MecanicMisc" title="ansys.dpf.post.misc_results.MecanicMisc"><code class="xref py py-class docutils literal notranslate"><span class="pre">ansys.dpf.post.misc_results.MecanicMisc</span></code></a>
+result objects that you can access. For example, this code shows how to access the <code class="docutils literal notranslate"><span class="pre">nodal_acceleration</span></code>
+result object:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Instantiate</span> <span class="n">the</span> <span class="n">solution</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf</span><span class="w"> </span><span class="kn">import</span> <span class="n">post</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf.post</span><span class="w"> </span><span class="kn">import</span> <span class="n">examples</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">solution</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_solution</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">multishells_rst</span><span class="p">)</span>
+
+<span class="n">Get</span> <span class="n">the</span> <span class="n">nodal</span> <span class="n">acceleration</span> <span class="n">result</span> <span class="n">data</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">acceleration</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">nodal_acceleration</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>All keyword arguments are available for miscellaneous results, except <code class="docutils literal notranslate"><span class="pre">location</span></code>.
+For more information, see <a class="reference internal" href="../examples/05-Legacy/07-result_keywords.html#ref-result-keywords"><span class="std std-ref">Use keywords to get a more precise result</span></a>.</p>
+<p>Some subresults might be available as keyword arguments, such as the scalar
+components of nodal acceleration:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Instantiate</span> <span class="n">the</span> <span class="n">solution</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf</span><span class="w"> </span><span class="kn">import</span> <span class="n">post</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf.post</span><span class="w"> </span><span class="kn">import</span> <span class="n">examples</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">solution</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_solution</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">multishells_rst</span><span class="p">)</span>
+
+<span class="n">Get</span> <span class="n">the</span> <span class="n">result</span> <span class="n">data</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">acceleration</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">nodal_acceleration</span><span class="p">(</span><span class="n">subresult</span><span class="o">=</span><span class="s2">&quot;Y&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To determine available queries, you can browse the metadata in the result file. For more
+information, see <a class="reference internal" href="accessing_file_metadata.html#user-guide-accessing-file-metadata"><span class="std std-ref">Browse result file metadata</span></a>.</p>
+</section>
+</section>
+<section id="thermal-electric-result-files">
+<h2>Thermal/electric result files<a class="headerlink" href="#thermal-electric-result-files" title="Link to this heading">#</a></h2>
+<p>You can access thermal/electric results using the legacy <code class="docutils literal notranslate"><span class="pre">Solution</span></code> object.</p>
+<p>After loading a <code class="docutils literal notranslate"><span class="pre">Solution</span></code> object from a thermal/electric analysis
+result file (RTH), you can query these <code class="docutils literal notranslate"><span class="pre">Result</span></code> objects:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">temperature</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">heat_flux</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">electric_field</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">electric_potential</span></code></p></li>
+</ul>
+<section id="temperature">
+<h3>Temperature<a class="headerlink" href="#temperature" title="Link to this heading">#</a></h3>
+<p>Temperature is the DOF solution for a thermal analysis.</p>
+<p>This code shows how to access the <a class="reference internal" href="../api/_autosummary/ansys.dpf.post.temperature.Temperature.html#ansys.dpf.post.temperature.Temperature" title="ansys.dpf.post.temperature.Temperature"><code class="xref py py-class docutils literal notranslate"><span class="pre">Temperature</span></code></a>
+result object:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Instantiate</span> <span class="n">the</span> <span class="n">solution</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf</span><span class="w"> </span><span class="kn">import</span> <span class="n">post</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf.post</span><span class="w"> </span><span class="kn">import</span> <span class="n">examples</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">solution</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_solution</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">steady_therm</span><span class="p">)</span>
+
+<span class="n">Instantiate</span> <span class="n">the</span> <span class="n">temperature</span> <span class="n">result</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">temperature</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">temperature</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>As inferred above, the <code class="docutils literal notranslate"><span class="pre">location</span></code> argument for a DOF solution must be nodal.
+This code shows how to access the scalar field directly:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Instantiate</span> <span class="n">the</span> <span class="n">solution</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf</span><span class="w"> </span><span class="kn">import</span> <span class="n">post</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf.post</span><span class="w"> </span><span class="kn">import</span> <span class="n">examples</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">solution</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_solution</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">multishells_rst</span><span class="p">)</span>
+
+<span class="n">Instantiate</span> <span class="n">the</span> <span class="n">temperature</span> <span class="n">result</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">temperature</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">temperature</span><span class="p">()</span>
+
+<span class="n">Get</span> <span class="n">the</span> <span class="n">y</span> <span class="n">temperature</span> <span class="n">result</span> <span class="n">data</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">temp</span> <span class="o">=</span> <span class="n">temperature</span><span class="o">.</span><span class="n">scalar</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">temp</span><span class="o">.</span><span class="n">get_data_at_field</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="heat-flux">
+<h3>Heat flux<a class="headerlink" href="#heat-flux" title="Link to this heading">#</a></h3>
+<p>This code shows how to access the <a class="reference internal" href="../api/ansys.dpf.post.temperature.html#ansys.dpf.post.temperature.HeatFlux" title="ansys.dpf.post.temperature.HeatFlux"><code class="xref py py-class docutils literal notranslate"><span class="pre">HeatFlux</span></code></a> result
+object:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Instantiate</span> <span class="n">the</span> <span class="n">solution</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf</span><span class="w"> </span><span class="kn">import</span> <span class="n">post</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf.post</span><span class="w"> </span><span class="kn">import</span> <span class="n">examples</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">solution</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_solution</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">steady_therm</span><span class="p">)</span>
+
+<span class="n">Instantiate</span> <span class="n">the</span> <span class="n">heat_flux</span> <span class="n">result</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">heat_flux</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">heat_flux</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">HeatFlux</span></code> result object corresponds to a vector field. To obtain the scalar
+components (x-components) of this field, access the subresult:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Instantiate</span> <span class="n">the</span> <span class="n">solution</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf</span><span class="w"> </span><span class="kn">import</span> <span class="n">post</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf.post</span><span class="w"> </span><span class="kn">import</span> <span class="n">examples</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">solution</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_solution</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">multishells_rst</span><span class="p">)</span>
+
+<span class="n">Instantiate</span> <span class="n">the</span> <span class="n">temperature</span> <span class="n">result</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">heat_flux</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">heat_flux</span><span class="p">()</span>
+
+<span class="n">Get</span> <span class="n">the</span> <span class="n">y</span> <span class="n">heat_flux</span> <span class="n">result</span> <span class="n">data</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">heat_flux_x</span> <span class="o">=</span> <span class="n">heat_flux</span><span class="o">.</span><span class="n">x</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">heat_flux_x</span><span class="o">.</span><span class="n">get_data_at_field</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>You can query other components accordingly. For more information, see
+<a class="reference internal" href="../api/result_data.html#ref-api-result-data"><span class="std std-ref">ResultData class</span></a>.</p>
+</section>
+<section id="electric-field">
+<h3>Electric field<a class="headerlink" href="#electric-field" title="Link to this heading">#</a></h3>
+<p>This code shows how to access the <a class="reference internal" href="../api/ansys.dpf.post.electric_results.html#ansys.dpf.post.electric_results.ElectricField" title="ansys.dpf.post.electric_results.ElectricField"><code class="xref py py-class docutils literal notranslate"><span class="pre">ElectricField</span></code></a>
+result object:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Instantiate</span> <span class="n">the</span> <span class="n">solution</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf</span><span class="w"> </span><span class="kn">import</span> <span class="n">post</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf.post</span><span class="w"> </span><span class="kn">import</span> <span class="n">examples</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">solution</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_solution</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">electric_therm</span><span class="p">)</span>
+
+<span class="n">Instantiate</span> <span class="n">the</span> <span class="n">electric</span> <span class="n">field</span> <span class="n">result</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">electric_field</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">electric_field</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">electric_field</span></code> result object corresponds to a vector field. To
+obtain the scalar components of this field, such as the x-components, access
+the subresult:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Instantiate</span> <span class="n">the</span> <span class="n">solution</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf</span><span class="w"> </span><span class="kn">import</span> <span class="n">post</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf.post</span><span class="w"> </span><span class="kn">import</span> <span class="n">examples</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">solution</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_solution</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">multishells_rst</span><span class="p">)</span>
+
+<span class="n">Instantiate</span> <span class="n">the</span> <span class="n">electric</span> <span class="n">field</span> <span class="n">result</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">electric_field</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">electric_field</span><span class="p">()</span>
+
+<span class="n">Get</span> <span class="n">the</span> <span class="n">y</span> <span class="n">electricfield</span> <span class="n">result</span> <span class="n">data</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">electric_field_x</span> <span class="o">=</span> <span class="n">electric_field</span><span class="o">.</span><span class="n">x</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">electric_field_x</span><span class="o">.</span><span class="n">get_data_at_field</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>For more information, see <a class="reference internal" href="../api/result_data.html#ref-api-result-data"><span class="std std-ref">ResultData class</span></a>.</p>
+</section>
+<section id="electric-potential">
+<h3>Electric potential<a class="headerlink" href="#electric-potential" title="Link to this heading">#</a></h3>
+<p>This code shows how to access the <a class="reference internal" href="../api/ansys.dpf.post.electric_results.html#ansys.dpf.post.electric_results.ElectricPotential" title="ansys.dpf.post.electric_results.ElectricPotential"><code class="xref py py-class docutils literal notranslate"><span class="pre">ElectricPotential</span></code></a>
+result object:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Instantiate</span> <span class="n">the</span> <span class="n">solution</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf</span><span class="w"> </span><span class="kn">import</span> <span class="n">post</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf.post</span><span class="w"> </span><span class="kn">import</span> <span class="n">examples</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">solution</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_solution</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">steady_therm</span><span class="p">)</span>
+
+<span class="n">Instantiate</span> <span class="n">the</span> <span class="n">electric</span> <span class="n">potential</span> <span class="n">result</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">electric_potential</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">electric_potential</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">electric_potential</span></code> result object corresponds to a scalar field. You can access
+its values with:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Instantiate</span> <span class="n">the</span> <span class="n">solution</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf</span><span class="w"> </span><span class="kn">import</span> <span class="n">post</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.dpf.post</span><span class="w"> </span><span class="kn">import</span> <span class="n">examples</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">solution</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">load_solution</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">multishells_rst</span><span class="p">)</span>
+
+<span class="n">Instantiate</span> <span class="n">the</span> <span class="n">electric</span> <span class="n">potential</span> <span class="n">result</span> <span class="nb">object</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">electric_potential</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">electric_potential</span><span class="p">()</span>
+
+<span class="n">Get</span> <span class="n">the</span> <span class="n">y</span> <span class="n">electric</span> <span class="n">potential</span> <span class="n">result</span> <span class="n">data</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">ep</span> <span class="o">=</span> <span class="n">electric_potential</span><span class="o">.</span><span class="n">scalar</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">ep</span><span class="o">.</span><span class="n">get_data_at_field</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#structural-result-files">Structural result files</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#displacement">Displacement</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stress">Stress</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elastic-and-plastic-strain">Elastic and plastic strain</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#structural-temperature">Structural temperature</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#miscellaneous-results">Miscellaneous results</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#thermal-electric-result-files">Thermal/electric result files</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#temperature">Temperature</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#heat-flux">Heat flux</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#electric-field">Electric field</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#electric-potential">Electric potential</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+<!-- If there is no fix edit button function, use the PyData edit-this-button-->
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../_sources/user_guide/accessing_results.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"ignoreLocation": true, "keys": ["title", "text"], "limit": 10, "min_chars_for_search": 2, "threshold": 0.5}');
+const SEARCH_FILE = "../_static/search.json";
+</script>
+
+
+<script src="../_static/js/search.js"></script>
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2025 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  1.4.1. <br />Last updated on
+  <span id="ast_build_date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var ast_lastModifiedDate = new Date(document.lastModified);
+  var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("ast_build_date").innerHTML = ast_build_date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
